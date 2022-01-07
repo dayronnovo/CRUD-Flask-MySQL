@@ -1,7 +1,7 @@
 from flask import Flask
 
 # Importar los controladores
-from controllers.ItemRestController import item_api
+from controllers.item_rest_controller import item_api
 
 app = Flask(__name__)
 
