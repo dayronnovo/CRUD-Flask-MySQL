@@ -4,5 +4,10 @@ class Item:
         self.name = name
         self.price = price
 
-    def json(self):
-        return {'id': self._id, 'name': self.name, 'price': self.price}
+    @staticmethod
+    def json(id, name, price):
+        return {'id': id, 'name': name, 'price': price}
+
+    @classmethod
+    def constructor(cls, name, price):
+        return cls(None, name, price)
