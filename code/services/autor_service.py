@@ -1,5 +1,5 @@
 from models.autor import Autor
-from typing import Dict
+from typing import Dict, List
 # Importar la bd
 from conexion_bd_mysql import obtener_conexion
 
@@ -11,7 +11,7 @@ class AutorService:
     # @staticmethod
     # def get_by_id(id):
     #     conexion = obtener_conexion()
-    #     data = ''
+    #     data = None
     #     with conexion.cursor() as cursor:
     #         # cursor.execute(
     #         #     f"SELECT * FROM {AutorService.TABLE_NAME} where id = %s", (id,))
@@ -25,7 +25,7 @@ class AutorService:
 
     @staticmethod
     def get_by_id(id):
-        # connection = sqlite3.connect('dat.bd')  # Probe la excepcion asi
+
         conexion = obtener_conexion()
         cursor = conexion.cursor()
         cursor.execute(
@@ -36,48 +36,47 @@ class AutorService:
         data = Autor.json(*data) if data else None
         return data if data else None
 
-    # @staticmethod
-    # def get_all():
-    #     # items = []
-    #     connection = sqlite3.connect('data.bd')
-    #     cursor = connection.cursor()
+    @staticmethod
+    def get_all():
 
-    #     query = f"select * from {ItemService.TABLE_NAME}"
-    #     # Siempre tiene que ser una tupla
-    #     result = cursor.execute(query)
-    #     rows = result.fetchall()
+        conexion = obtener_conexion()
+        cursor = conexion.cursor()
 
-    #     connection.close()
+        cursor.execute(
+            f"SELECT * FROM {AutorService.TABLE_NAME}")
+        data = cursor.fetchall()
+        conexion.close()
 
-    #     if len(rows) > 0:
-    #         items = [Item.json(*item) for item in rows]
-    #         return {'items': items}
-    #     else:
-    #         return None
+        if len(data) > 0:
+            data = [Autor.json(*item) for item in data]
+            return {'items': data}
+        else:
+            return None
 
-    # @staticmethod
-    # def create(item: Dict):  # item es un diccionario
-    #     connection = sqlite3.connect('data.bd')
-    #     cursor = connection.cursor()
+    @staticmethod
+    def create(item: Dict):  # item es un diccionario
+        conexion = obtener_conexion()
+        cursor = conexion.cursor()
 
-    #     # query = f"insert into {ItemService.TABLE_NAME} values (?,?)"
-    #     # SQLite
-    #     query = f"insert into {ItemService.TABLE_NAME} values (?,?,?)"
-    #     # Siempre tiene que ser una tupla
-    #     # cursor.execute(query, (item['name'], item['price']))
-    #     cursor.execute(query, (None, item['name'], item['price']))  # SQLite
+        # cursor.execute(f"INSERT INTO {AutorService.TABLE_NAME} (nombre, apellido, fecha_nacimiento) VALUES (%s,%s,%s)",
+        #                (item['nombre'], item['apellido'], item['fecha_nacimiento']))
 
-    #     connection.commit()
-    #     connection.close()
+        sql = f"""INSERT INTO {AutorService.TABLE_NAME} 
+        (nombre, apellido, fecha_nacimiento) VALUES (%s,%s,%s)"""
 
-    # @staticmethod
-    # def delete(id):
-        connection = sqlite3.connect('data.bd')
-        cursor = connection.cursor()
+        cursor.execute(
+            sql, (item['nombre'], item['apellido'], item['fecha_nacimiento']))
 
-        query = f"delete from {ItemService.TABLE_NAME} where id = (?)"
-        # Siempre tiene que ser una tupla
-        cursor.execute(query, (id,))
+        conexion.commit()
+        conexion.close()
 
-        connection.commit()
-        connection.close()
+    @staticmethod
+    def delete(id):
+        conexion = obtener_conexion()
+        cursor = conexion.cursor()
+
+        cursor.execute(
+            f"delete from {AutorService.TABLE_NAME} where id = ({id})")
+
+        conexion.commit()
+        conexion.close()
