@@ -2,19 +2,36 @@
 from flask import Blueprint, request
 from models.autor import Autor
 from services.autor_service import AutorService
+from services.libro_service import LibroService
 from compro_prueba import Validacion
 
 # Creando controlador
 autor_controller = Blueprint('autor_controller', __name__)
 # Metodos
 
+# ======================= Con este solo obtengo el autor =======================
+# @autor_controller.route("/<int:id>")
+# def get_by_id(id):
+#     try:
+#         item = AutorService.get_by_id(id)
+#         if item:
+#             return item
+#         else:
+#             return {'Error': f"No existe el id {id}"}, 400  # Bad Request
+#     except Exception as error:
+#         return {'Error': f"{error}"}, 500  # Internal Error
+
+# ======================= Con este obtengo el autor con sus libros =======================
+
 
 @autor_controller.route("/<int:id>")
 def get_by_id(id):
     try:
-        item = AutorService.get_by_id(id)
-        if item:
-            return item
+        autor = AutorService.get_by_id(id)
+        libros = LibroService.get_by_autor_id(id)
+        autor['libros'] = libros
+        if autor and libros:
+            return autor
         else:
             return {'Error': f"No existe el id {id}"}, 400  # Bad Request
     except Exception as error:

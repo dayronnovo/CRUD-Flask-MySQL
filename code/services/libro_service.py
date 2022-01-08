@@ -21,24 +21,28 @@ class LibroService:
 
         if len(data) > 0:
             data = [Libro.json(*item) for item in data]
-            return {'items': data}
+            return data
         else:
             return None
 
-    # @staticmethod
-    # def get_by_id(id):
+# ======================= Con este solo obtengo el libro =======================
+    @staticmethod
+    def get_by_id(id):
 
-    #     conexion = obtener_conexion()
-    #     cursor = conexion.cursor()
-    #     cursor.execute(
-    #         f"SELECT * FROM {LibroService.TABLE_NAME} where id = {id}")
-    #     data = cursor.fetchone()
-    #     # print(data)  # (1, 'El amor en los tiempos de cólera', 1985, 63.99, 1)
-    #     conexion.close()
+        conexion = obtener_conexion()
+        cursor = conexion.cursor()
+        cursor.execute(
+            f"SELECT l.id, l.titulo, l.anio_edicion, l.precio FROM {LibroService.TABLE_NAME} l where l.id = {id}")
+        data = cursor.fetchone()
+        # print(data)  # (1, 'El amor en los tiempos de cólera', 1985, 63.99)
+        conexion.close()
 
-    #     data = Libro.json(*data) if data else None
-    #     # print(data) # {'id': 1, 'titulo': 'El amor en los tiempos de cólera', 'anio_edicion': 1985, 'precio': 63.99, 'autor': 1}
-    #     return data if data else None
+        data = Libro.json(*data) if data else None
+        # {'id': 1, 'titulo': 'El amor en los tiempos de cólera', 'anio_edicion': 1985, 'precio': 63.99, 'autor': None}
+        # print(data)
+        return data if data else None
+
+# ======================= Con este obtengo el libro y el autor =======================
 
     # @staticmethod
     # def get_by_id(id):
