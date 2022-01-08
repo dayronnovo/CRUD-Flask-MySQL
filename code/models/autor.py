@@ -1,7 +1,3 @@
-from datetime import date
-# from typing import
-
-
 class Autor:
     def __init__(self, id, nombre, apellido, fecha_nacimiento) -> None:
         self.id = id

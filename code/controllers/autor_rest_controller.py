@@ -3,8 +3,9 @@ from flask import Blueprint, request
 from models.autor import Autor
 from services.autor_service import AutorService
 from compro_prueba import Validacion
-autor_controller = Blueprint('autor_controller', __name__)
 
+# Creando controlador
+autor_controller = Blueprint('autor_controller', __name__)
 # Metodos
 
 
