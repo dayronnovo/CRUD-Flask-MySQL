@@ -1,4 +1,4 @@
-from datetime import date
+# from datetime import date
 from flask import Blueprint, request
 from models.autor import Autor
 from services.autor_service import AutorService
