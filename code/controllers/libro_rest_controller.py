@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from models.libro import Libro
 from services.libro_service import LibroService
 from compro_prueba import Validacion
@@ -20,13 +20,39 @@ def get_by_id(id):
         return {'Error': f"{error}"}, 500  # Internal Error
 
 
-@libro_controller.route("/libro_autor/<int:id>")
-def get_by_autor_id(id):
+@libro_controller.route("/autor/<int:id>")
+def get_book_by_id_with_autor(id):
     try:
-        item = LibroService.get_by_autor_id(id)
+        item = LibroService.get_book_by_id_with_autor(id)
         if item:
             return item
         else:
             return {'Error': f"No existe el id {id}"}, 400  # Bad Request
+    except Exception as error:
+        return {'Error': f"{error}"}, 500  # Internal Error
+
+
+@libro_controller.route("/", methods=['POST'], strict_slashes=False)
+def create():
+    data = request.get_json()
+
+    try:
+
+        LibroService.create(data)
+        return {"Message": "Libro creado con exito"}, 201  # Created
+    except (TypeError, ValueError) as error:
+        return {'Error': f"{error}"}, 400  # Bad Request
+    except Exception as error:
+        return {'Error': f"{error}"}, 500  # Internal Error
+
+
+@libro_controller.route("/")
+def get_all():
+    try:
+        items = LibroService.get_all()
+        if items:
+            return jsonify(items)
+        else:
+            return {'Error': "Base de datos empty"}, 400  # Bad Request
     except Exception as error:
         return {'Error': f"{error}"}, 500  # Internal Error

@@ -11,4 +11,4 @@ class Libro:
 
     @staticmethod
     def json(id, titulo, anio_edicion, precio, autor=None):
-        return {'id': id, 'titulo': titulo, 'anio_edicion': anio_edicion, 'precio': precio, 'autor': autor}
+        return {'id': id, 'titulo': titulo, 'anio_edicion': anio_edicion, 'precio': precio}
