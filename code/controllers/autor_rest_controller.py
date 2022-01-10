@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 from models.autor import Autor
 from services.autor_service import AutorService
 from services.libro_service import LibroService
-from compro_prueba import Validacion
+from validaciones import Validacion
 
 # Creando controlador
 autor_controller = Blueprint('autor_controller', __name__)
@@ -55,18 +55,19 @@ def get_all():
 @autor_controller.route("/", methods=['POST'], strict_slashes=False)
 def create():
     data = request.get_json()
-
+    # print(data)
     try:
-        Validacion.add_argument(data, 'nombre', str, True)
-        Validacion.add_argument(data, 'apellido', str, True)
-        Validacion.add_argument(data, 'fecha_nacimiento', str, True)
+        
+        Validacion.validar(Autor.campos, data)
 
         AutorService.create(data)
         return {"Message": "Item creado con exito"}, 201  # Created
-    except (TypeError, ValueError) as error:
+    except (ValueError) as error:
         return {'Error': f"{error}"}, 400  # Bad Request
     except Exception as error:
         return {'Error': f"{error}"}, 500  # Internal Error
+
+# ======================= Crear autor con varios libros =======================
 
 
 @autor_controller.route("/<int:id>", methods=['DELETE'])

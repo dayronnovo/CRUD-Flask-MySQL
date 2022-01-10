@@ -61,17 +61,20 @@ class LibroService:
             return None
 
     @staticmethod
-    def create(item: Dict):  # item es un diccionario
+    def create(item):  
         conexion = obtener_conexion()
         cursor = conexion.cursor()
 
-        # id, titulo, anio_edicion, precio, autor
 
-        sql = f"""INSERT INTO {LibroService.TABLE_NAME} 
-        (titulo, anio_edicion, precio, autor_id) VALUES (%s,%s,%s,%s)"""
+        # sql = f"INSERT INTO {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor) VALUES (%s,%s,%s,%s)"
+        # cursor.execute(sql, (item['titulo'], item['anio_edicion'], item['precio'], item.get('autor')))
 
-        cursor.execute(
-            sql, (item['titulo'], item['anio_edicion'], item['precio'], item.get('autor')))
+
+
+        # sql = f"INSERT INTO {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor) VALUES (%s,%s,%s,%s)"
+
+        
+            
 
         conexion.commit()
         conexion.close()
