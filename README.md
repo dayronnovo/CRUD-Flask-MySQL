@@ -17,3 +17,7 @@ $ pip install -r requirements.txt
 ```
 python .\code\app.py
 ```
+
+#### Los sgts archivos no pertenecen al proyecto:
+* jugando_SQLite.py
+* probar_mysql.py
