@@ -114,7 +114,10 @@ class LibroService:
         conexion.close()
 
         if len(data) > 0:
-            data = [Libro.json(*item) for item in data]
+            # data = [Libro.json(*item) for item in data]
+            # Lo puse asi porque no quiero que devuelva el id del autor
+            data = [Libro.json(item[0], item[1], item[2], item[3]) for item in data]
+
 
             return data
         else:
