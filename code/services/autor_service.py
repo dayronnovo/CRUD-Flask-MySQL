@@ -12,35 +12,24 @@ class AutorService:
 
     @staticmethod
     def get_by_id(id):
-        try:
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
-            cursor.execute(
-            f"SELECT * FROM {AutorService.TABLE_NAME} where id = {id}")
-            data = cursor.fetchone()
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
+
+                cursor.execute(
+                    f"SELECT * FROM {AutorService.TABLE_NAME} where id = {id}")
+                data = cursor.fetchone()
 
         data = Autor.json(*data) if data else None
         return data if data else None
 
     @staticmethod
     def get_all():
-        try:
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
 
-            cursor.execute(
-            f"SELECT * FROM {AutorService.TABLE_NAME}")
-            data = cursor.fetchall()
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
+                cursor.execute(
+                    f"SELECT * FROM {AutorService.TABLE_NAME}")
+                data = cursor.fetchall()
 
         if len(data) > 0:
             data = [Autor.json(*item) for item in data]
@@ -49,51 +38,35 @@ class AutorService:
             return None
 
     @staticmethod
-    def create(item: Dict):  
-        try:
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
+    def create(item: Dict):
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
 
-            sql = f"""INSERT INTO {AutorService.TABLE_NAME} 
+                sql = f"""INSERT INTO {AutorService.TABLE_NAME} 
         (nombre, apellido, fecha_nacimiento) VALUES (%s,%s,%s)"""
 
-            cursor.execute(
-            sql, (item['nombre'], item['apellido'], item['fecha_nacimiento']))
+                cursor.execute(
+                    sql, (item['nombre'], item['apellido'], item['fecha_nacimiento']))
 
-            conexion.commit()
+                conexion.commit()
         # Obtengo el id del autor que acabo de insertar
-            if item.get('libros') != None:
-                sql = "SELECT LAST_INSERT_ID() as lastid"
-                cursor.execute(sql)
-                id_autor = cursor.fetchone()
+                if item.get('libros') != None:
+                    sql = "SELECT LAST_INSERT_ID() as lastid"
+                    cursor.execute(sql)
+                    id_autor = cursor.fetchone()
 
             # agrego el id del autor a todos los "objetos" libros
-                libros = item['libros']
-                for libro in libros:
-                    libro['autor'] = id_autor[0]
-
-            # print(libros)
-
-                LibroService.create_many_widh_autor(libros)
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
- 
+                    libros = item['libros']
+                    for libro in libros:
+                        libro['autor'] = id_autor[0]
+                    LibroService.create_many_widh_autor(libros)
 
     @staticmethod
     def delete(id):
-        try:
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
 
-            cursor.execute(
-            f"delete from {AutorService.TABLE_NAME} where id = ({id})")
+                cursor.execute(
+                    f"delete from {AutorService.TABLE_NAME} where id = ({id})")
 
-            conexion.commit()
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
+                conexion.commit()

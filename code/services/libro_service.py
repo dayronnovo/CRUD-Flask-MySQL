@@ -14,37 +14,28 @@ class LibroService:
 # ======================= Con este solo obtengo el libro =======================
     @staticmethod
     def get_by_id(id):
+        # data = None
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute(
+                f"SELECT l.id, l.titulo, l.anio_edicion, l.precio FROM {LibroService.TABLE_NAME} l where l.id = {id}")
+                data = cursor.fetchone()
+        
 
-        try:
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
-            cursor.execute(
-            f"SELECT l.id, l.titulo, l.anio_edicion, l.precio FROM {LibroService.TABLE_NAME} l where l.id = {id}")
-            data = cursor.fetchone()
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
-
-        data = Libro.json(*data) if data else None
+                data = Libro.json(*data) if data else None
 
         return data if data else None
 
 # ======================= Con este obtengo el libro con su autor =======================
     @staticmethod
     def get_book_by_id_with_autor(id):
-        try:
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
-            cursor.execute(
-            f"SELECT l.id, l.titulo, l.anio_edicion, l.precio, a.id, a.nombre, a.apellido, a.fecha_nacimiento FROM {LibroService.TABLE_NAME} l JOIN autores a ON a.id = l.id HAVING l.id = {id} ")
-            data = cursor.fetchone()
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
+
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute(
+                f"SELECT l.id, l.titulo, l.anio_edicion, l.precio, a.id, a.nombre, a.apellido, a.fecha_nacimiento FROM {LibroService.TABLE_NAME} l JOIN autores a ON a.id = l.id HAVING l.id = {id} ")
+                data = cursor.fetchone()
+        
 
         libro = Libro.json(data[0], data[1], data[2], data[3])
         autor = Autor.json(data[4], data[5], data[6], data[7])
@@ -57,18 +48,12 @@ class LibroService:
     # =============================================================================
     @staticmethod
     def get_books_by_autor_id(id):
-        try:
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute(
+                f"SELECT l.id, l.titulo, l.anio_edicion, l.precio FROM {LibroService.TABLE_NAME} l WHERE l.autor_id = {id}")
+                data = cursor.fetchall()
 
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
-            cursor.execute(
-            f"SELECT l.id, l.titulo, l.anio_edicion, l.precio FROM {LibroService.TABLE_NAME} l WHERE l.autor_id = {id}")
-            data = cursor.fetchall()
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
 
 
         if len(data) > 0:
@@ -79,62 +64,44 @@ class LibroService:
 
     @staticmethod
     def create(item):
-        try:  
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
 
-            sql = f"insert into {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor_id) values (%s,%s,%s,%s)"
-
-
-            cursor.execute(sql, (item['titulo'], item['anio_edicion'], item['precio'], item.get('autor')))
+                sql = f"insert into {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor_id) values (%s,%s,%s,%s)"
 
 
-            conexion.commit()
+                cursor.execute(sql, (item['titulo'], item['anio_edicion'], item['precio'], item.get('autor')))
+
+
+                conexion.commit()
         # Lo dejo aqui para documentacion mia
         # except MySQLError as error:
         #     print(f"Error: {error}, Argumento: {type(error.args[0])}")
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
+
 
 # ======================================================================================
 #                       Lo uso en el AutorService
 # ======================================================================================
     @staticmethod
     def create_many_widh_autor(item):  
-        try:
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
 
-            # print(item)
+                sql = f"insert into {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor_id) values (%s,%s,%s,%s)"
 
-            sql = f"insert into {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor_id) values (%s,%s,%s,%s)"
+                cursor.executemany(sql, ConexionBdMySql.get_valores(item))
+                conexion.commit()
 
-            cursor.executemany(sql, ConexionBdMySql.get_valores(item))
-
-            conexion.commit()
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
 
     @staticmethod
     def get_all():
-        try:
-            conexion = ConexionBdMySql.obtener_conexion()
-            cursor = conexion.cursor()
+        with ConexionBdMySql.obtener_conexion() as conexion:
+            with conexion.cursor() as cursor:
 
-            cursor.execute(
-            f"SELECT * FROM {LibroService.TABLE_NAME}")
-            data = cursor.fetchall()
-        except Exception as error:
-            raise Exception(error)
-            
-        finally:
-            conexion.close()
+                cursor.execute(
+                f"SELECT * FROM {LibroService.TABLE_NAME}")
+                data = cursor.fetchall()
+
 
         if len(data) > 0:
             # data = [Libro.json(*item) for item in data]
