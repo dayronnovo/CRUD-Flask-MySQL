@@ -4,7 +4,7 @@
 * [Flask](https://flask.palletsprojects.com/) - The framework used
 * [Autopep8](https://pypi.org/project/autopep8/) - The formatter
 * [Flask-MySQLdb](https://flask-mysqldb.readthedocs.io/en/latest/) - MySQL connection for Flask
-* [Autopep8](https://pypi.org/project/PyMySQL/) - Interaction with MySQL databases
+* [PyMySQL](https://pypi.org/project/PyMySQL/) - Interaction with MySQL databases
 
 Install all project dependencies using:
 
