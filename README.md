@@ -11,3 +11,9 @@ Install all project dependencies using:
 ```
 $ pip install -r requirements.txt
 ```
+
+### Running
+ 
+```
+python .\code\app.py
+```
