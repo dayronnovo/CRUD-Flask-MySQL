@@ -42,3 +42,27 @@ except (pymysql.err.OperationalError, pymysql.err.InternalError) as e:
 
 finally:
     conexion.close()
+
+
+
+
+# ================================================================
+#              Como tenia el create en LibroService
+# ================================================================
+
+# @staticmethod
+#     def create(item):  
+#         conexion = ConexionBdMySql.obtener_conexion()
+#         cursor = conexion.cursor()
+
+#         print(item)
+
+#         sql = f"insert into {LibroService.TABLE_NAME} ({ConexionBdMySql.get_campos(item)}) values ({ConexionBdMySql.get_caracteres(item)})"
+
+#         if type(item) == dict:
+#             cursor.execute(sql, ConexionBdMySql.get_valores(item))
+#         else:
+#             cursor.executemany(sql, ConexionBdMySql.get_valores(item))
+
+#         conexion.commit()
+#         conexion.close()

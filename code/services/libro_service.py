@@ -1,8 +1,11 @@
+from os import error
+
+from pymysql.err import MySQLError
 from models.libro import Libro
 from models.autor import Autor
 from typing import Dict, List
 # Importar la bd
-from conexion_bd_mysql import obtener_conexion
+from conexion_bd_mysql import ConexionBdMySql
 
 
 class LibroService:
@@ -12,7 +15,7 @@ class LibroService:
     @staticmethod
     def get_by_id(id):
 
-        conexion = obtener_conexion()
+        conexion = ConexionBdMySql.obtener_conexion()
         cursor = conexion.cursor()
         cursor.execute(
             f"SELECT l.id, l.titulo, l.anio_edicion, l.precio FROM {LibroService.TABLE_NAME} l where l.id = {id}")
@@ -27,7 +30,7 @@ class LibroService:
     @staticmethod
     def get_book_by_id_with_autor(id):
 
-        conexion = obtener_conexion()
+        conexion = ConexionBdMySql.obtener_conexion()
         cursor = conexion.cursor()
         cursor.execute(
             f"SELECT l.id, l.titulo, l.anio_edicion, l.precio, a.id, a.nombre, a.apellido, a.fecha_nacimiento FROM {LibroService.TABLE_NAME} l JOIN autores a ON a.id = l.id HAVING l.id = {id} ")
@@ -47,7 +50,7 @@ class LibroService:
     @staticmethod
     def get_books_by_autor_id(id):
 
-        conexion = obtener_conexion()
+        conexion = ConexionBdMySql.obtener_conexion()
         cursor = conexion.cursor()
         cursor.execute(
             f"SELECT l.id, l.titulo, l.anio_edicion, l.precio FROM {LibroService.TABLE_NAME} l WHERE l.autor_id = {id}")
@@ -61,20 +64,40 @@ class LibroService:
             return None
 
     @staticmethod
-    def create(item):  
-        conexion = obtener_conexion()
+    def create(item):
+        try:  
+            conexion = ConexionBdMySql.obtener_conexion()
+            cursor = conexion.cursor()
+
+            sql = f"insert into {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor_id) values (%s,%s,%s,%s)"
+
+
+            cursor.execute(sql, (item['titulo'], item['anio_edicion'], item['precio'], item.get('autor')))
+
+
+            conexion.commit()
+        # Lo dejo aqui para documentacion mia
+        # except MySQLError as error:
+        #     print(f"Error: {error}, Argumento: {type(error.args[0])}")
+        except Exception as error:
+            raise Exception(error)
+            
+        finally:
+            conexion.close()
+
+# ======================================================================================
+#                       Lo uso en el AutorService
+# ======================================================================================
+    @staticmethod
+    def create_many_widh_autor(item):  
+        conexion = ConexionBdMySql.obtener_conexion()
         cursor = conexion.cursor()
 
+        print(item)
 
-        # sql = f"INSERT INTO {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor) VALUES (%s,%s,%s,%s)"
-        # cursor.execute(sql, (item['titulo'], item['anio_edicion'], item['precio'], item.get('autor')))
+        sql = f"insert into {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor_id) values (%s,%s,%s,%s)"
 
-
-
-        # sql = f"INSERT INTO {LibroService.TABLE_NAME} (titulo, anio_edicion, precio, autor) VALUES (%s,%s,%s,%s)"
-
-        
-            
+        cursor.executemany(sql, ConexionBdMySql.get_valores(item))
 
         conexion.commit()
         conexion.close()
@@ -82,7 +105,7 @@ class LibroService:
     @staticmethod
     def get_all():
 
-        conexion = obtener_conexion()
+        conexion = ConexionBdMySql.obtener_conexion()
         cursor = conexion.cursor()
 
         cursor.execute(

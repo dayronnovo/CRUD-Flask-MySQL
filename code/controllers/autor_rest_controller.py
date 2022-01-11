@@ -1,6 +1,7 @@
 # from datetime import date
 from flask import Blueprint, request, jsonify
 from models.autor import Autor
+from models.libro import Libro
 from services.autor_service import AutorService
 from services.libro_service import LibroService
 from validaciones import Validacion
@@ -55,10 +56,12 @@ def get_all():
 @autor_controller.route("/", methods=['POST'], strict_slashes=False)
 def create():
     data = request.get_json()
-    # print(data)
     try:
         
         Validacion.validar(Autor.campos, data)
+        if data.get('libros') != None:
+            for json in data['libros']:
+                Validacion.validar(Libro.campos, json)
 
         AutorService.create(data)
         return {"Message": "Item creado con exito"}, 201  # Created

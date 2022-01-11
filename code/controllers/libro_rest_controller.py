@@ -1,5 +1,6 @@
 from typing import List, Type
 from flask import Blueprint, request, jsonify
+from pymysql.err import MySQLError
 from models.libro import Libro
 from services.libro_service import LibroService
 from validaciones import Validacion
@@ -43,24 +44,21 @@ def create():
     try:
         if type(data) == dict:
             Validacion.validar(Libro.campos, data)
+            
+# Es para validar una lista de libros
+        # if type(data) == list:
+        #     for json in data:
+        #         Validacion.validar(Libro.campos, json)
 
-        if type(data) == list:
-            for json in data:
-                Validacion.validar(Libro.campos, json)
-
-        print(data)
-
-        # LibroService.create(data)
+        LibroService.create(data)
         
         return {"Message": "Libro creado con exito"}, 201  # Created
-    except (TypeError, ValueError) as error:
+    except (ValueError) as error:
         return {'Error': f"{error}"}, 400  # Bad Request
     except Exception as error:
         return {'Error': f"{error}"}, 500  # Internal Error
 
-# ================================================================================= 
-#                           Crear varios libros (Sin autor)
-# =================================================================================
+
 
 # @libro_controller.route("/", methods=['POST'], strict_slashes=False)
 # def create():
