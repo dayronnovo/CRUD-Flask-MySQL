@@ -22,7 +22,7 @@ class LibroService:
                 data = cursor.fetchone()
         
 
-                data = Libro.json(*data) if data else None
+                data = Libro.json(*data)
 
         return data if data else None
 
