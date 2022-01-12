@@ -1,4 +1,3 @@
-from typing import List, Type
 from flask import Blueprint, request, jsonify
 from pymysql.err import MySQLError
 from models.libro import Libro
@@ -57,30 +56,6 @@ def create():
         return {'Error': f"{error}"}, 400  # Bad Request
     except Exception as error:
         return {'Error': f"{error}"}, 500  # Internal Error
-
-
-
-# @libro_controller.route("/", methods=['POST'], strict_slashes=False)
-# def create():
-#     # De la forma en la que envio el JSON o es una lista o es un dict
-#     data = request.get_json()
-#     try:
-#         if type(data) == dict:
-#             Validacion.validar(Libro.campos, data)
-#             LibroService.create(tuple(data.values()))
-
-#         if type(data) == list:
-#             listaTemp = []
-#             for json in data:
-#                 Validacion.validar(Libro.campos, json)
-#                 listaTemp.append(tuple(json.values()))
-#             LibroService.create(listaTemp)     
-        
-#         return {"Message": "Libro creado con exito"}, 201  # Created
-#     except (TypeError, ValueError) as error:
-#         return {'Error': f"{error}"}, 400  # Bad Request
-#     except Exception as error:
-#         return {'Error': f"{error}"}, 500  # Internal Error
 
 
 @libro_controller.route("/")

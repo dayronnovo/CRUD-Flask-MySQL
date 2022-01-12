@@ -8,7 +8,7 @@ class Autor:
         (lambda x: len(x.strip()) > 0, "No puede ser vacio")
     ]
 
-    campos = {'id': __val_id, 'nombre': __val_str, 'apellido': __val_str, 'fecha_nacimiento': __val_str}
+    campos = {'id': (__val_id, True), 'nombre': (__val_str, True), 'apellido': (__val_str, True), 'fecha_nacimiento': (__val_str, True)}
     
 
     @staticmethod
