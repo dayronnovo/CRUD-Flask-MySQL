@@ -32,23 +32,13 @@ def get_book_by_id_with_autor(id):
     except Exception as error:
         return {'Error': f"{error}"}, 500  # Internal Error
 
-# ================================================================================= 
-#                           Crear un libro (Sin autor)
-# =================================================================================
 
 @libro_controller.route("/", methods=['POST'], strict_slashes=False)
 def create():
-    # De la forma en la que envio el JSON o es una lista o es un dict
     data = request.get_json()
     try:
-        if type(data) == dict:
-            Validacion.validar(Libro.campos, data)
-            
-# Es para validar una lista de libros
-        # if type(data) == list:
-        #     for json in data:
-        #         Validacion.validar(Libro.campos, json)
-
+        
+        Validacion.validar(Libro.campos, data)
         LibroService.create(data)
         
         return {"Message": "Libro creado con exito"}, 201  # Created

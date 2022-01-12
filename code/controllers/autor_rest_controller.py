@@ -59,7 +59,7 @@ def create():
     try:
         
         Validacion.validar(Autor.campos, data)
-        if data.get('libros') != None:
+        if data.get('libros'):
             for json in data['libros']:
                 Validacion.validar(Libro.campos, json)
 

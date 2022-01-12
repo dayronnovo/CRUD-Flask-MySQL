@@ -19,7 +19,7 @@ class AutorService:
                     f"SELECT * FROM {AutorService.TABLE_NAME} where id = {id}")
                 data = cursor.fetchone()
 
-        data = Autor.json(*data) if data else None
+        data = Autor.json(*data)
         return data if data else None
 
     @staticmethod
